@@ -21,10 +21,10 @@ class QuizInterface:
         self.question_text = self.canvas.create_text(150,125,text='',width=290,font=('Arial',20,'italic'),fill=THEME_COLOR)
         self.canvas.grid(row=1,column=0,columnspan=2,pady=50)
 
-        self.true = Button(self.window,image=self.true_img)
+        self.true = Button(self.window,image=self.true_img,command=self.press_true)
         self.true.grid(row=2,column=0)
 
-        self.false = Button(self.window,image=self.false_img)
+        self.false = Button(self.window,image=self.false_img,command=self.press_false)
         self.false.grid(row=2,column=1)
         
         self.get_next_question()
@@ -34,4 +34,9 @@ class QuizInterface:
         q_text = self.Quiz.next_question()
         self.canvas.itemconfig(self.question_text, text=q_text)
 
+    def press_true(self):
+        self.Quiz.check_answer("true")
+
+    def press_false(self):
+        self.Quiz.check_answer("false") 
         
