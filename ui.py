@@ -6,6 +6,7 @@ THEME_COLOR = "#375362"
 class QuizInterface:
     
     def __init__(self, QuizBrain):
+        self.score_int = 0
         self.Quiz = QuizBrain
         self.window = Tk()
         self.window.title('Quizler')
@@ -14,7 +15,7 @@ class QuizInterface:
         self.true_img = PhotoImage(file='images\\true.png')
         self.false_img = PhotoImage(file='images\\false.png')
 
-        self.score = Label(self.window,text=f"score: 0",bg=THEME_COLOR,fg='white')
+        self.score = Label(self.window,text=f"score: {self.score_int}",bg=THEME_COLOR,fg='white')
         self.score.grid(row=0,column=1)
 
         self.canvas = Canvas(self.window, width=300,height=250)
@@ -31,12 +32,28 @@ class QuizInterface:
 
         self.window.mainloop()
     def get_next_question(self):
-        q_text = self.Quiz.next_question()
-        self.canvas.itemconfig(self.question_text, text=q_text)
-
+        self.canvas.config(bg='white')
+        if self.Quiz.still_has_questions():
+            q_text = self.Quiz.next_question()
+            
+            self.canvas.itemconfig(self.question_text, text=q_text)
+        else:
+            self.canvas.itemconfig(self.question_text, text='You\'ve finished all questions')    
+            self.true.config(state='disabled')
+            self.false.config(state='disabled')
     def press_true(self):
-        self.Quiz.check_answer("true")
+        self.give_feedback(self.Quiz.check_answer("true"))
+        
 
     def press_false(self):
-        self.Quiz.check_answer("false") 
+        self.give_feedback(self.Quiz.check_answer("false"))
         
+    def give_feedback(self,is_right):
+            if is_right:
+                self.canvas.config(bg='green')
+                self.score_int +=1
+                self.score.config(text=f'score: {self.score_int}')
+            else:
+                self.canvas.config(bg='red') 
+
+            self.window.after(1000,self.get_next_question)         
